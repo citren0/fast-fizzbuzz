@@ -5,7 +5,7 @@
 #include <immintrin.h>
 
 
-#define LOOPS 800000000
+#define LOOPS 800000
 
 #define OUTBUFSIZE 16384
 char outbuf[OUTBUFSIZE];
@@ -19,8 +19,9 @@ char * itoa(int val, int base)
 	int i = 30;
 	
 	for(; val && i ; --i, val /= base)
-	
+	{
 		buf[i] = "0123456789abcdef"[val % base];
+	}
 	
 	return &buf[i+1];
 	

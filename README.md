@@ -4,7 +4,7 @@ There exists a challenge on the internet to write the fastest FizzBuzz program.
 
 You can read about it here: [https://codegolf.stackexchange.com/questions/215216/high-throughput-fizz-buzz](https://codegolf.stackexchange.com/questions/215216/high-throughput-fizz-buzz)
 
-I chose to write mine with AVX2 instructions and can achieve a throughput of 262 MiB/s on my laptop.
+I chose to write mine with AVX2 instructions and can achieve a throughput of 430 MiB/s on my laptop.
 
 This is a work in progress, and you will likely see it improve over time.
 

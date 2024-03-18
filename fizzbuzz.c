@@ -49,6 +49,9 @@ __m256i mod(__m256i ini, __m256 mod)
 
 	// divide by the modulus
 	inf = _mm256_div_ps(inf, mod);
+
+	__m256 offset = _mm256_set1_ps(0.05f);
+	inf = _mm256_add_ps(inf, offset);
 	
 	// Cast to int.
 	__m256i divi = _mm256_cvttps_epi32(inf);

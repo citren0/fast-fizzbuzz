@@ -5,7 +5,7 @@
 #include <immintrin.h>
 
 
-#define LOOPS 800000
+#define LOOPS 800000000
 
 #define OUTBUFSIZE 16384
 char outbuf[OUTBUFSIZE];
@@ -13,10 +13,10 @@ int cursor = 0;
 
 
 // ITOA by Robert Jan Schaper
-char * itoa(int val, int base)
+char * itoa(char * buf, int val)
 {
-	static char buf[32] = {0};
 	int i = 30;
+	register int base = 10;
 	
 	for(; val && i ; --i, val /= base)
 	{
@@ -68,10 +68,33 @@ __m256i mod(__m256i ini, __m256 mod)
 }
 
 
+// Broken mod?
+// __m256i mod(__m256i ini, __m256i modi)
+// {
+// 	// convert ints to 32 bit floats.
+// 	__m256 inf = _mm256_cvtepi32_ps(ini);
+// 	__m256 modf = _mm256_cvtepi32_ps(modi);
+
+// 	// divide by the modulus
+// 	inf = _mm256_div_ps(inf, modf);
+	
+// 	// Cast to int.
+// 	__m256i divi = _mm256_cvttps_epi32(inf);
+
+// 	// Multiply by the modulus
+// 	__m256i in2 = _mm256_mul_epi32(divi, modi);
+
+// 	// Subtract
+// 	__m256i diff = _mm256_sub_epi32(ini, in2);
+
+// 	return diff;
+// }
+
+
 int main()
 {
 	int err;
-	err = setvbuf(stdout, NULL, _IOFBF, 8192);
+	err = setvbuf(stdout, NULL, _IOFBF, OUTBUFSIZE);
 
 	if (err != 0)
 	{
@@ -81,11 +104,13 @@ int main()
 	register __m256i ints;
 	register __m256 mod3;
 	register __m256 mod5;
-	register __m256 mod3post, mod5post, mod3and5post;
+	register __m256i mod3post, mod5post, mod3and5post;
 	int counter = 0;
 	int f;
 	int i;
 	int32_t mod3ex, mod5ex, modexboth;
+	char arr1[32];
+	char * arr2;
 
 	for (i = 1; i <= LOOPS; i += 8)
 	{
@@ -158,10 +183,9 @@ int main()
 			}
 			else
 			{
-				char * arr1;
-				arr1 = itoa(i+f, 10);
-				writeToOutBuf(arr1, strlen(arr1));
-				writeToOutBuf("\n", 2);
+				arr2 = itoa(arr1, i+f);
+				writeToOutBuf(arr2, strlen(arr2));
+				writeToOutBuf("\n", 1);
 			}
 			
 		}

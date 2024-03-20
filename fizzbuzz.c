@@ -7,20 +7,24 @@
 
 #define LOOPS 800000000
 
+#define ITOA_BASE 10
+
 #define OUTBUFSIZE 16384
 char outbuf[OUTBUFSIZE];
 int cursor = 0;
 
 
-// ITOA by Robert Jan Schaper
+// ITOA parially by Robert Jan Schaper, modified by me.
 char * itoa(char * buf, int val)
 {
-	int i = 30;
-	register int base = 10;
+	register int i = 30;
+
+	buf[i--] = '\0';
+	buf[i--] = '\n';
 	
-	for(; val && i ; --i, val /= base)
+	for(; val && i ; --i, val /= ITOA_BASE)
 	{
-		buf[i] = "0123456789abcdef"[val % base];
+		buf[i] = "0123456789"[val % ITOA_BASE];
 	}
 	
 	return &buf[i+1];
@@ -93,6 +97,8 @@ __m256i mod(__m256i ini, __m256 mod)
 // 	return diff;
 // }
 
+//break iter.c:6 if i == 5
+
 
 int main()
 {
@@ -104,10 +110,10 @@ int main()
 		exit(1);
 	}
 
-	register __m256i ints;
-	register __m256 mod3;
-	register __m256 mod5;
-	register __m256i mod3post, mod5post, mod3and5post;
+	__m256i ints;
+	__m256 mod3 = _mm256_set1_ps(3.0f);
+	__m256 mod5 = _mm256_set1_ps(5.0f);
+	__m256i mod3post, mod5post, mod3and5post;
 	int counter = 0;
 	int f;
 	int i;
@@ -118,12 +124,10 @@ int main()
 	for (i = 1; i <= LOOPS; i += 8)
 	{
 		ints = _mm256_set_epi32(i, i+1, i+2, i+3, i+4, i+5, i+6, i+7);
-		mod3 = _mm256_set1_ps(3.0f);
-		mod5 = _mm256_set1_ps(5.0f);
 
-		__m256i mod3post = mod(ints, mod3);
-		__m256i mod5post = mod(ints, mod5);
-		__m256i mod3and5post = _mm256_or_si256(mod3post, mod5post);
+		mod3post = mod(ints, mod3);
+		mod5post = mod(ints, mod5);
+		mod3and5post = _mm256_or_si256(mod3post, mod5post);
 
 		for (int f = 0; f < 8; f++)
 		{
@@ -188,7 +192,7 @@ int main()
 			{
 				arr2 = itoa(arr1, i+f);
 				writeToOutBuf(arr2, strlen(arr2));
-				writeToOutBuf("\n", 1);
+				//writeToOutBuf("\n", 1);
 			}
 			
 		}
